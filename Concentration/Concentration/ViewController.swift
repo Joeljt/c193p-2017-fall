@@ -12,24 +12,43 @@ class ViewController: UIViewController {
     // Controller 持有 Model 的引用
     // lazy 懒加载变量，有人使用的时候才去初始化；这样一定能保证 self 可用，初始化就不会有问题了
     // count + 1 进行向上取整，避免除以 2 以后丢掉一个元素
-    lazy var game: Concentration = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    private lazy var game: Concentration = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
     
-
+    
     // [Type] means an array of type, same as normal syntax Array<UIButton>
     // Cmd + Ctrl + click to rename this
-    @IBOutlet var cardButtons: Array<UIButton>!
+    @IBOutlet private var cardButtons: Array<UIButton>!
    
-    @IBOutlet weak var flipCountLabel: UILabel!
-    
-    var flipCount = 0 {
+    @IBOutlet private weak var flipCountLabel: UILabel! {
+        // XIB 与代码绑定的时候会调用 didSet 方法，可以在这个位置为 flip count lable 初始化
         didSet {
-            // property observer，每次属性值发生改变时，都会执行此方法
-            // 类似 watch 函数
-            flipCountLabel.text = "Flips: \(flipCount)"
+            updateFlipCountLabel()
         }
     }
     
-    @IBAction func touchCard(_ sender: UIButton) {
+    private var numberOfPairsOfCards : Int {
+        return (cardButtons.count + 1) / 2
+    }
+    
+    private var flipCount = 0 {
+        didSet {
+            // property observer，每次属性值发生改变时，都会执行此方法
+            // 类似 watch 函数
+            // 初始化的时候并不会调用 didSet 方法
+            updateFlipCountLabel()
+        }
+    }
+    
+    private func updateFlipCountLabel() {
+        let attributes: [NSAttributedString.Key:Any] = [
+            NSAttributedString.Key.strokeWidth : 5.0,
+            NSAttributedString.Key.strokeColor : #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
+        ]
+        let attributedString = NSAttributedString(string: "Flips: \(flipCount)", attributes: attributes)
+        flipCountLabel.attributedText = attributedString
+    }
+    
+    @IBAction private func touchCard(_ sender: UIButton) {
         flipCount += 1
         // Int? 的类型是 Optional，可选类型
         // 可选类型的本质是枚举，Optional 枚举有两个值，Set 和 Not Set
@@ -46,7 +65,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func updateViewFromModel() {
+    private func updateViewFromModel() {
         // .indices 可以取出数组的下标
         for index in cardButtons.indices {
             let button = cardButtons[index] // 取出对应位置的 UI button
@@ -65,16 +84,18 @@ class ViewController: UIViewController {
         }
     }
     
-    var emojiChoices = ["👻", "😈", "👻", "😈"]
-    var emoji = [Int: String]() // Dictionary simple syntax
+//    private var emojiChoices = ["👻", "😄", "🎃", "😈", "💃🏻", "😭", "🍬", "🍭", "❤️"]
+    private var emojiChoices = "👻😄🎃😈💃🏻😭🍬🍭❤️"
     
-    func emoji(for card: Card) -> String {
-        if emoji[card.identifier] == nil && emojiChoices.count > 0 {
-            let randomIndex = Int(arc4random_uniform(UInt32(emojiChoices.count)))
-            emoji[card.identifier] = emojiChoices.remove(at: randomIndex)
+    private var emoji = [Card : String]() // Dictionary simple syntax
+    
+    private func emoji(for card: Card) -> String {
+        if emoji[card] == nil && emojiChoices.count > 0 {
+            let randomStringIndex = emojiChoices.index(emojiChoices.startIndex, offsetBy: emojiChoices.count.arc4random)
+            emoji[card] = String(emojiChoices.remove(at: randomStringIndex))
                     
         }
-        return emoji[card.identifier] ?? "?"
+        return emoji[card] ?? "?"
     }
     
 //    func flipCard(withEmoji emoji: String, on button: UIButton) {
@@ -89,3 +110,14 @@ class ViewController: UIViewController {
     
 }
 
+extension Int {
+    var arc4random: Int {
+        if self > 0 {
+            return Int(arc4random_uniform(UInt32(self)))
+        } else if self < 0 {
+            return -Int(arc4random_uniform(UInt32(abs(self))))
+        } else {
+            return 0
+        }
+    }
+}

@@ -12,17 +12,26 @@ import Foundation
 // 2. struct value type, class reference type
 //  struct 是值传递，当做参数传值时，会复制一份；class 是引用传递
 //  Int/Array/Dictionary 都是 struct 类型
-struct Card {
+struct Card : Hashable
+{
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+    
+    static func ==(lhs: Card, rhs: Card) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
     
     // Card 不会有标识 Emoji 的属性，Emoji 是 UI 的一部分
     // Model 层的数据是 UI independent 的
     
     var isFaceUp = false
     var isMatched = false
-    var identifier: Int
+    private  var identifier: Int
     
-    static var identifierFactory = 0
-    static func getUniqueIdentifier() -> Int {
+    private static var identifierFactory = 0
+    private static func getUniqueIdentifier() -> Int {
         identifierFactory += 1
         return identifierFactory;
     }
