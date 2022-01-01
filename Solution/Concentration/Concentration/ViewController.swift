@@ -25,26 +25,13 @@ class ViewController: UIViewController {
             game.chooseCard(at: cardIndex)
             
             // 2. 在 CONTROLLER 层更新 UI
-            // 从当前主题中遍历，找到对应位置的 emoji，并根据选出来的牌的状态来决定是赋值还是翻过去
-            for index in cardsButton.indices {
-                // 从数组中取出来对应位置的牌，看看牌的状态
-                let button = cardsButton[index]
-                let card = game.cards[index]
-                if card.isFaceUp {
-                    button.setTitle(getEmoji(for: card), for: UIControl.State.normal)
-                    button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-                } else {
-                    button.setTitle("", for: UIControl.State.normal)
-                    button.backgroundColor = card.isMatched ? #colorLiteral(red: 1, green: 0.5781051517, blue: 0, alpha: 0) : buttonColor
-                }
-            }
-            // 更新分数和翻转次数
-            countLabel.text = "Flips: \(game.flipCount)"
-            scoreLabel.text = "Score: \(game.score)"
-            
-            game.checkIfMatch(at: cardIndex)
-            
+            updateViewFromModel()
         }
+    }
+    
+    @IBAction func newGameButtonPressed(_ sender: UIButton) {
+        setup()
+        updateViewFromModel()
     }
     
     // 主题
@@ -90,6 +77,24 @@ class ViewController: UIViewController {
         countLabel.textColor = self.buttonColor
         newGameButton.setTitleColor(self.buttonColor, for: UIControl.State.normal)
         
+    }
+    
+    private func updateViewFromModel() {
+        // 从当前主题中遍历，找到对应位置的 emoji，并根据选出来的牌的状态来决定是赋值还是翻过去
+        for index in cardsButton.indices {
+            let button = cardsButton[index]
+            let card = game.cards[index]
+            if card.isFaceUp {
+                button.setTitle(getEmoji(for: card), for: UIControl.State.normal)
+                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+            } else {
+                button.setTitle("", for: UIControl.State.normal)
+                button.backgroundColor = card.isMatched ? #colorLiteral(red: 1, green: 0.5781051517, blue: 0, alpha: 0) : buttonColor
+            }
+        }
+        // 更新分数和翻转次数
+        countLabel.text = "Flips: \(game.flipCount)"
+        scoreLabel.text = "Score: \(game.score)"
     }
     
     // 根据随机下标更新主题色

@@ -18,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		042838FD27741B240074F9A7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		04AEC7A7277323AB0007CF5F /* Concentration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Concentration.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04AEC7AA277323AB0007CF5F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		04AEC7AC277323AB0007CF5F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +67,7 @@
 				04AEC7B0277323AB0007CF5F /* Main.storyboard */,
 				04AEC7B8277323AC0007CF5F /* Info.plist */,
 				04AEC7BE277323B60007CF5F /* Supporting Files */,
+				042838FD27741B240074F9A7 /* README.md */,
 			);
 			path = Concentration;
 			sourceTree = "<group>";
