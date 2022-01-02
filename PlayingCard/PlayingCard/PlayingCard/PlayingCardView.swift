@@ -7,25 +7,40 @@
 
 import UIKit
 
+@IBDesignable
 class PlayingCardView: UIView {
     
+    @IBInspectable
     var rank: Int = 5 {
         didSet {
             setNeedsDisplay() // 强制重绘
             setNeedsLayout() // 强制重新布局
         }
     }
+    @IBInspectable
     var suit: String = "❤️" {
         didSet {
             setNeedsDisplay() // 强制重绘
             setNeedsLayout() // 强制重新布局
         }
     }
-    
-    var isFaceUp: Bool = false  {
+    @IBInspectable
+    var isFaceUp: Bool = true  {
         didSet {
             setNeedsDisplay() // 强制重绘
             setNeedsLayout() // 强制重新布局
+        }
+    }
+    
+    var faceCardScale: CGFloat = SizeRatio.faceCardImageSizeToBoundsSize { didSet { setNeedsDisplay() } }
+    
+    @objc func adjustFaceCardScale(byHandlingGestureRecognizedBy recognizer: UIPinchGestureRecognizer) {
+        switch recognizer.state {
+        case .changed, .ended:
+            // 根据缩放比例来设置默认样式，并在之后进行重置
+            faceCardScale *= recognizer.scale
+            recognizer.scale = 1.0 // 重置手势的缩放比例，否则不能保证还原
+        default: break
         }
     }
     
@@ -90,11 +105,11 @@ class PlayingCardView: UIView {
         
         if isFaceUp {
             if let faceCardImage = UIImage(named: rankString + suit) {
-                faceCardImage.draw(in: bounds.zoom(by: SizeRatio.faceCardImageSizeToBoundsSize))
+                faceCardImage.draw(in: bounds.zoom(by: faceCardScale))
             }
         } else {
             if let cardBackImage = UIImage(named: "cardback") {
-                cardBackImage.draw(in: bounds.zoom(by: SizeRatio.faceCardImageSizeToBoundsSize))
+                cardBackImage.draw(in: bounds.zoom(by: faceCardScale))
             }
         }
         
